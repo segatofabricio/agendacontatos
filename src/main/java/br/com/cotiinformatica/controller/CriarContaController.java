@@ -13,7 +13,7 @@ import br.com.cotiinformatica.repositories.UsuarioRepository;
 @Controller
 public class CriarContaController {
 
-	@RequestMapping(value = "/criarconta") // URL da página
+	@RequestMapping(value = "/criarconta") // URL da pï¿½gina
 	public ModelAndView criarConta() {
 
 		// WEB-INF/views/criarconta.jsp
@@ -21,7 +21,11 @@ public class CriarContaController {
 		return modelAndView;
 	}
 
-	//método para capturar os dados enviados pelo formulário
+	
+	//---------------------------------------------------------------------------------------
+	
+	
+	//mï¿½todo para capturar os dados enviados pelo formulï¿½rio
 	@RequestMapping(value = "/cadastrar-usuario", method = RequestMethod.POST) 
 	public ModelAndView cadastrarUsuario(HttpServletRequest request) {
 
@@ -32,16 +36,31 @@ public class CriarContaController {
 			
 			Usuario usuario = new Usuario();
 			
-			//capturar os dados enviados pelo formulário
+			//capturar os dados enviados pelo formulï¿½rio
 			usuario.setNome(request.getParameter("nome"));
 			usuario.setEmail(request.getParameter("email"));
 			usuario.setSenha(request.getParameter("senha"));
 			
-			//gravando o usuário no banco de dados
-			UsuarioRepository usuarioRepository = new UsuarioRepository();
-			usuarioRepository.create(usuario);
+			//gravando o usuï¿½rio no banco de dados
 			
-			modelAndView.addObject("mensagem", "Parabéns " + usuario.getNome() + ", sua conta foi criada com sucesso!");
+			UsuarioRepository usuarioRepository = new UsuarioRepository();
+	//-------------------------------------------------------------------------------		
+			//verificar se o email ja estÃ¡ cadastrado
+			
+			if (usuarioRepository.findByEmail(usuario.getEmail()) != null) {
+				
+				modelAndView.addObject("mensagem", "O email " + usuario.getEmail() + ", jÃ¡ estÃ¡ cadastrado no sistema. Tente outro.");
+
+			}
+			
+			else {
+				
+				usuarioRepository.create(usuario);
+				
+				modelAndView.addObject("mensagem", "Parabï¿½ns " + usuario.getNome() + ", sua conta foi criada com sucesso!");
+			}
+	//-------------------------------------------------------------------------------------		
+			
 		}
 		catch(Exception e) {
 			modelAndView.addObject("mensagem", "Falha ao cadastrar: " + e.getMessage());
